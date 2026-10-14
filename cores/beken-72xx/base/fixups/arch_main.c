@@ -17,6 +17,9 @@
 #include "intc.h"
 #include "param_config.h"
 #include "start_type_pub.h"
+#include "uart_pub.h"
+
+extern void uart_fast_init(void);
 
 #if CFG_SUPPORT_BOOTLOADER
 void entry_set_world_flag(void) {
@@ -33,6 +36,10 @@ __attribute__((weak)) void __wrap_bk_printf_enable();
 unsigned char __bk_rf_is_init = 0;
 
 void entry_main(void) {
+	uart_print_port = UART2_PORT;
+    uart_fast_init();
+    // bk_send_string(UART2_PORT, "entry_main init\n");
+
 	// compatibility with BK7231S_1.0.5
 #if CFG_SUPPORT_BOOTLOADER
 	entry_set_world_flag();
