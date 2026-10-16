@@ -1,7 +1,7 @@
 # Copyright (c) Kuba Szczodrzyński 2023-02-28.
 
 import fnmatch
-from dataclasses import InitVar, dataclass, field
+from dataclasses import dataclass, field
 from glob import glob
 from os.path import isdir, join
 from typing import Dict, Generator, List, Tuple
@@ -69,14 +69,15 @@ def apply_options(env: Environment, options: Dict[str, List[str]]):
 
 @dataclass
 class Library:
-    env: InitVar[Environment]
+    env: Environment
     name: str
     base_dir: str
     srcs: List[str]
     includes: List[str] = field(default_factory=lambda: [])
     options: Dict[str, List[str]] = field(default_factory=lambda: {})
 
-    def __post_init__(self, env: Environment):
+    def __post_init__(self):
+        env = self.env
         # add base dir to all globs
         self.srcs = add_base_dir(env, self.base_dir, self.srcs)
         self.includes = add_base_dir(env, self.base_dir, self.includes, subst=True)
